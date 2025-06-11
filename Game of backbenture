@@ -1,0 +1,211 @@
+import React, { useState } from 'react';
+
+// Sample quiz questions with related videos
+const quizQuestions = [
+  {
+    question: 'What is 3² + 4²?',
+    options: ['5', '7', '25', '16'],
+    answer: '25',
+    video: 'https://www.youtube.com/embed/8IbI26UdXoM', // Pythagorean Theorem
+  },
+  {
+    question: 'What is 5 × 6?',
+    options: ['30', '56', '11', '35'],
+    answer: '30',
+    video: 'https://www.youtube.com/embed/hCwC2My8nAY', // Multiplication basics
+  },
+  {
+    question: 'What is the square root of 81?',
+    options: ['7', '8', '9', '10'],
+    answer: '9',
+    video: 'https://www.youtube.com/embed/DTJHkNZmwH8', // Square root explained
+  },
+];
+
+export default function CartoonQuizGame() {
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState('');
+  const [score, setScore] = useState(0);
+  const [showVideo, setShowVideo] = useState(false);
+  const [finished, setFinished] = useState(false);
+
+  const handleSubmit = () => {
+    if (selected === quizQuestions[current].answer) {
+      setScore(score + 1);
+    }
+    setShowVideo(true);
+  };
+
+  const nextQuestion = () => {
+    setShowVideo(false);
+    setSelected('');
+    if (current + 1 < quizQuestions.length) {
+      setCurrent(current + 1);
+    } else {
+      setFinished(true);
+    }
+  };
+
+  return (
+    <div style={styles.container}>
+      <h1 style={styles.title}>🎉 Math Cartoon Quiz Game! 🎉</h1>
+
+      {!finished ? (
+        <>
+          <div style={styles.questionBox}>
+            <p style={styles.questionText}>{quizQuestions[current].question}</p>
+            <div style={styles.optionsContainer}>
+              {quizQuestions[current].options.map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => setSelected(opt)}
+                  style={{
+                    ...styles.optionButton,
+                    backgroundColor: selected === opt ? '#FFD54F' : '#FFF8E1',
+                    borderColor: selected === opt ? '#F9A825' : '#FFECB3',
+                  }}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+            {!showVideo && (
+              <button
+                onClick={handleSubmit}
+                disabled={!selected}
+                style={{
+                  ...styles.submitButton,
+                  backgroundColor: selected ? '#4CAF50' : '#A5D6A7',
+                  cursor: selected ? 'pointer' : 'not-allowed',
+                }}
+              >
+                Submit Answer
+              </button>
+            )}
+          </div>
+
+          {showVideo && (
+            <div style={styles.videoBox}>
+              <p>
+                {selected === quizQuestions[current].answer
+                  ? 'Correct! 🎉 Watch this video to learn more:'
+                  : `Oops! The correct answer was "${quizQuestions[current].answer}". Watch this video to understand:`}
+              </p>
+              <iframe
+                width="320"
+                height="180"
+                src={quizQuestions[current].video}
+                title="Concept Video"
+                frameBorder="0"
+                allowFullScreen
+                style={{ borderRadius: '15px' }}
+              ></iframe>
+              <br />
+              <button onClick={nextQuestion} style={styles.nextButton}>
+                Next Question ➡️
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        <div style={styles.scoreBox}>
+          <h2>Game Over! 🎉</h2>
+          <p>
+            Your score: {score} / {quizQuestions.length}
+          </p>
+          <button
+            onClick={() => {
+              setCurrent(0);
+              setScore(0);
+              setFinished(false);
+              setSelected('');
+              setShowVideo(false);
+            }}
+            style={styles.restartButton}
+          >
+            Play Again 🔄
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const styles = {
+  container: {
+    maxWidth: 480,
+    margin: '20px auto',
+    padding: 20,
+    backgroundColor: '#FFECB3',
+    borderRadius: 20,
+    boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
+    fontFamily: "'Comic Sans MS', cursive, sans-serif",
+    textAlign: 'center',
+  },
+  title: {
+    color: '#F57F17',
+  },
+  questionBox: {
+    marginBottom: 20,
+  },
+  questionText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#BF360C',
+  },
+  optionsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  optionButton: {
+    padding: '12px 20px',
+    fontSize: 18,
+    borderRadius: 15,
+    border: '2px solid #FFECB3',
+    cursor: 'pointer',
+    minWidth: 80,
+    boxShadow: '2px 2px 6px rgba(0,0,0,0.15)',
+    userSelect: 'none',
+  },
+  submitButton: {
+    marginTop: 20,
+    padding: '12px 30px',
+    fontSize: 20,
+    borderRadius: 25,
+    border: 'none',
+    color: 'white',
+    userSelect: 'none',
+  },
+  videoBox: {
+    marginTop: 20,
+  },
+  nextButton: {
+    marginTop: 15,
+    padding: '10px 25px',
+    fontSize: 18,
+    borderRadius: 20,
+    border: 'none',
+    backgroundColor: '#F9A825',
+    color: 'white',
+    cursor: 'pointer',
+    userSelect: 'none',
+  },
+  scoreBox: {
+    fontSize: 20,
+    color: '#33691E',
+  },
+  restartButton: {
+    marginTop: 15,
+    padding: '12px 30px',
+    fontSize: 20,
+    borderRadius: 25,
+    border: 'none',
+    backgroundColor: '#43A047',
+    color: 'white',
+    cursor: 'pointer',
+    userSelect: 'none',
+  },
+};
